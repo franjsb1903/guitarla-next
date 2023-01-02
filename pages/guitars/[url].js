@@ -3,9 +3,9 @@ import Image from "next/image";
 import Layout from "../../components/layout";
 import styles from "../../styles/guitarras.module.css";
 
-const Product = ({ guitar }) => {
+const Product = ({ guitar, addToCarrito }) => {
   const [cantidad, setCantidad] = useState(0);
-  const { name, description, image, price } = guitar ?? {};
+  const { name, description, image, price } = guitar?.attributes ?? {};
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -14,6 +14,16 @@ const Product = ({ guitar }) => {
       alert("Cantidad no válida");
       return;
     }
+
+    const guitarSeleccionada = {
+      id: guitar?.id,
+      image: image.data.attributes.url,
+      name,
+      price,
+      amount: cantidad,
+    };
+
+    addToCarrito(guitarSeleccionada);
   };
 
   return (
@@ -73,7 +83,7 @@ export async function getStaticProps({ params: { url } }) {
   const { data: guitar } = await response.json();
 
   return {
-    props: { guitar: guitar[0].attributes },
+    props: { guitar: guitar[0] },
   };
 }
 
